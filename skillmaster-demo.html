@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillMaster - AI-Powered Skill Development</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: #202020;
+            min-height: 100vh;
+            color: #ececec;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header - Perplexity style */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(32, 32, 32, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 20px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ececec;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #20808d 0%, #1a5f6a 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 60px;
+        }
+
+        /* Search Container */
+        .search-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+            padding: 40px 20px;
+            transition: all 0.4s ease;
+        }
+
+        .search-container.has-results {
+            min-height: auto;
+            padding: 60px 20px 30px;
+        }
+
+        .search-content {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        .search-title {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #ececec;
+            margin-bottom: 40px;
+            transition: all 0.4s ease;
+        }
+
+        .search-container.has-results .search-title {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #20808d;
+            box-shadow: 0 0 0 3px rgba(32, 128, 141, 0.1);
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ececec;
+            font-size: 1.05em;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: #707070;
+        }
+
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: #707070;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .search-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #20808d;
+        }
+
+        .search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Container */
+        .results-container {
+            display: none;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        .answer-section {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            line-height: 1.7;
+            color: #d0d0d0;
+        }
+
+        .answer-section h2 {
+            color: #ececec;
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .answer-section h3 {
+            color: #20808d;
+            font-size: 1.15em;
+            font-weight: 600;
+            margin: 20px 0 12px;
+        }
+
+        .answer-section p {
+            margin-bottom: 12px;
+        }
+
+        .answer-section ul {
+            margin: 12px 0 12px 24px;
+        }
+
+        .answer-section li {
+            margin-bottom: 8px;
+        }
+
+        .answer-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .answer-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #20808d 0%, #1a5f6a 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .answer-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ececec;
+        }
+
+        .answer-content {
+            color: #d0d0d0;
+            line-height: 1.7;
+        }
+
+        /* Grid layout for distinctions */
+        .distinctions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .distinction-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.2s;
+        }
+
+        .distinction-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(32, 128, 141, 0.3);
+        }
+
+        .distinction-card h4 {
+            color: #20808d;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        .distinction-card p {
+            font-size: 0.95em;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .distinction-card .label {
+            color: #808080;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .level-beginner {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+        }
+
+        .level-intermediate {
+            background: rgba(33, 150, 243, 0.15);
+            color: #64b5f6;
+        }
+
+        .level-advanced {
+            background: rgba(76, 175, 80, 0.15);
+            color: #81c784;
+        }
+
+        /* Insights list */
+        .insights-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .insight-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            line-height: 1.6;
+            color: #d0d0d0;
+        }
+
+        .insight-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        /* Steps list */
+        .steps-list {
+            margin-top: 16px;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .step-card h4 {
+            color: #ececec;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        .step-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .step-meta-item {
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .step-meta-item strong {
+            color: #20808d;
+            font-weight: 600;
+        }
+
+        /* Sources section - Perplexity style */
+        .sources-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sources-title {
+            font-size: 0.9em;
+            color: #a0a0a0;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sources-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .source-badge:hover {
+            background: rgba(32, 128, 141, 0.1);
+            border-color: rgba(32, 128, 141, 0.3);
+            color: #20808d;
+        }
+
+        .source-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: rgba(32, 128, 141, 0.2);
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #20808d;
+        }
+
+        /* Related questions */
+        .related-questions {
+            margin-top: 30px;
+        }
+
+        .related-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ececec;
+            margin-bottom: 16px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .question-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(32, 128, 141, 0.3);
+        }
+
+        .question-icon {
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            color: #d0d0d0;
+            font-size: 0.95em;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #d0d0d0;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: rgba(32, 128, 141, 0.1);
+            border-color: rgba(32, 128, 141, 0.3);
+            color: #20808d;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #20808d 0%, #1a5f6a 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(32, 128, 141, 0.3);
+        }
+
+        /* Loading state */
+        .loading-container {
+            display: none;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .loading-container.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 16px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #20808d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #a0a0a0;
+            font-size: 0.95em;
+        }
+
+        /* Workflow progress */
+        .workflow-progress {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .workflow-progress.active {
+            display: block;
+        }
+
+        .progress-steps {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-step.active .progress-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #20808d, #1a5f6a);
+            animation: progressFill 0.5s ease-out;
+        }
+
+        @keyframes progressFill {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .progress-label {
+            font-size: 0.85em;
+            color: #a0a0a0;
+        }
+
+        /* Chat Input Container */
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 12px 18px;
+            transition: all 0.3s ease;
+        }
+
+        .input-row:focus-within {
+            border-color: #20808d;
+            box-shadow: 0 4px 20px rgba(32, 128, 141, 0.2);
+        }
+
+        .input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ececec;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .input-row input::placeholder {
+            color: #707070;
+        }
+
+        .input-row select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ececec;
+            padding: 8px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .input-row select option {
+            background: #2a2a2a;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #20808d 0%, #1a5f6a 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(32, 128, 141, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-text h1 {
+                font-size: 2em;
+            }
+
+            .search-container.has-results .welcome-text h1 {
+                font-size: 1.5em;
+            }
+
+            .distinctions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🎓</div>
+                    <span>SkillMaster</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-size: 0.85em; color: #a0a0a0; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="apiToggle" onchange="toggleAPI()" style="cursor: pointer;">
+                        <span id="apiStatus">Mock Data</span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Search Container -->
+            <div class="search-container" id="searchContainer">
+                <div class="search-content">
+                    <h1 class="search-title">Where knowledge begins</h1>
+                    <div class="search-box">
+                        <input
+                            type="text"
+                            id="skillInput"
+                            placeholder="Ask anything..."
+                            autocomplete="off"
+                        >
+                        <button class="search-btn" onclick="handleSearch()" id="searchBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Container -->
+            <div class="results-container" id="resultsContainer">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for demonstration
+        const mockData = {
+            "Public Speaking": {
+                distinctions: [
+                    {
+                        name: "Voice Projection",
+                        description: "Ability to control volume and clarity to reach all audience members",
+                        importance: "Ensures your message is heard and understood by everyone",
+                        current_level: "Beginner"
+                    },
+                    {
+                        name: "Body Language",
+                        description: "Using gestures, posture, and movement to enhance communication",
+                        importance: "Non-verbal cues account for 55% of communication impact",
+                        current_level: "Beginner"
+                    },
+                    {
+                        name: "Story Structure",
+                        description: "Organizing content with clear beginning, middle, and end",
+                        importance: "Helps audience follow and remember your message",
+                        current_level: "Intermediate"
+                    },
+                    {
+                        name: "Audience Engagement",
+                        description: "Reading the room and adapting to audience reactions",
+                        importance: "Creates connection and maintains attention",
+                        current_level: "Beginner"
+                    },
+                    {
+                        name: "Anxiety Management",
+                        description: "Techniques to control nervousness and maintain composure",
+                        importance: "Confidence directly impacts delivery effectiveness",
+                        current_level: "Beginner"
+                    }
+                ],
+                insights: [
+                    "Start with small, low-stakes speaking opportunities to build confidence gradually",
+                    "Record yourself speaking and review to identify specific areas for improvement",
+                    "Focus on one distinction at a time rather than trying to improve everything at once",
+                    "Practice breathing exercises before speaking to manage anxiety and improve voice control"
+                ],
+                next_steps: [
+                    {
+                        action: "Practice voice projection exercises for 10 minutes daily",
+                        time_commitment: "10 minutes daily",
+                        success_criteria: "Can be heard clearly from 20 feet away without straining",
+                        develops: ["Voice Projection", "Anxiety Management"]
+                    },
+                    {
+                        action: "Record a 2-minute speech and analyze your body language",
+                        time_commitment: "30 minutes weekly",
+                        success_criteria: "Identify 3 specific body language improvements to make",
+                        develops: ["Body Language"]
+                    },
+                    {
+                        action: "Outline 3 personal stories using the story structure framework",
+                        time_commitment: "1 hour this week",
+                        success_criteria: "Each story has clear setup, conflict, and resolution",
+                        develops: ["Story Structure"]
+                    }
+                ]
+            },
+            sources: [
+                { title: "Skilled Success Methodology", url: "#" },
+                { title: "Deliberate Practice Research", url: "#" },
+                { title: "Cognitive Load Theory", url: "#" },
+                { title: "Skill Acquisition Framework", url: "#" }
+            ],
+            relatedQuestions: [
+                "How long does it typically take to master Public Speaking?",
+                "What are common mistakes beginners make in Public Speaking?",
+                "How can I practice Public Speaking without an audience?",
+                "What books or courses are best for learning Public Speaking?"
+            ]
+        };
+
+        const searchContainer = document.getElementById('searchContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const searchBtn = document.getElementById('searchBtn');
+        const skillInput = document.getElementById('skillInput');
+        let currentAnalysis = null;
+
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:8000';
+        let USE_MOCK_DATA = true; // Toggle via UI
+
+        // Handle Enter key
+        skillInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !searchBtn.disabled) {
+                handleSearch();
+            }
+        });
+
+        // Toggle API mode
+        function toggleAPIMode() {
+            const toggle = document.getElementById('apiToggle');
+            USE_MOCK_DATA = !toggle.checked;
+        }
+
+        async function handleSearch() {
+            const query = skillInput.value.trim();
+
+            if (!query) {
+                return;
+            }
+
+            // Update UI
+            searchBtn.disabled = true;
+            searchContainer.classList.add('has-results');
+            resultsContainer.innerHTML = '<div class="answer-section"><p style="color: #a0a0a0;">Analyzing...</p></div>';
+            resultsContainer.classList.add('active');
+
+            try {
+                if (USE_MOCK_DATA) {
+                    // Use mock data
+                    await sleep(1500);
+                    displayResults(query, mockData["Public Speaking"]);
+                } else {
+                    // Use real API
+                    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            skill_name: query,
+                            proficiency_level: "Beginner"
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.detail || 'Analysis failed');
+                    }
+
+                    const data = await response.json();
+                    displayResults(query, data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultsContainer.innerHTML = `
+                    <div class="answer-section">
+                        <p style="color: #ff6b6b;">❌ Error: ${error.message}</p>
+                        <p style="color: #a0a0a0; margin-top: 10px;">
+                            ${USE_MOCK_DATA ? 'Please try again.' : 'Make sure the API server is running.'}
+                        </p>
+                    </div>
+                `;
+            } finally {
+                searchBtn.disabled = false;
+            }
+        }
+
+        function displayResults(query, data) {
+            // Store for export
+            currentAnalysis = { query, data, timestamp: new Date().toISOString() };
+
+            // Build distinctions
+            const distinctionsHTML = data.distinctions.map(d => `
+                <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                    <h3>${d.name}</h3>
+                    <p>${d.description}</p>
+                    <p style="color: #a0a0a0; font-size: 0.95em; margin-top: 8px;">${d.importance}</p>
+                </div>
+            `).join('');
+
+            // Build insights
+            const insightsHTML = data.insights.map(i => `<li>${i}</li>`).join('');
+
+            // Build next steps
+            const stepsHTML = data.next_steps.map((s, i) => `
+                <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                    <h3>${i + 1}. ${s.action}</h3>
+                    <p style="color: #a0a0a0; font-size: 0.95em;">⏱️ ${s.time_commitment}</p>
+                    <p style="color: #a0a0a0; font-size: 0.95em;">✅ ${s.success_criteria}</p>
+                </div>
+            `).join('');
+
+            // Display results
+            resultsContainer.innerHTML = `
+                <div class="answer-section">
+                    <h2>Answer</h2>
+                    <p>I've analyzed <strong>${query}</strong> and broken it down into ${data.distinctions.length} key components you can develop systematically.</p>
+
+                    <h3>Key Distinctions</h3>
+                    ${distinctionsHTML}
+
+                    <h3>Actionable Insights</h3>
+                    <ul>${insightsHTML}</ul>
+
+                    <h3>Your Next Steps</h3>
+                    ${stepsHTML}
+                </div>
+            `;
+
+            // Scroll to results
+            setTimeout(() => {
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // Interactive features
+        function saveResults() {
+            if (!currentAnalysis) return;
+
+            const key = `skillmaster_${currentAnalysis.skillName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
+            localStorage.setItem(key, JSON.stringify(currentAnalysis));
+
+            alert(`✅ Analysis saved! You can access it later from your browser's local storage.`);
+        }
+
+        function exportJSON() {
+            if (!currentAnalysis) return;
+
+            const dataStr = JSON.stringify(currentAnalysis, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `skillmaster_${currentAnalysis.skillName.toLowerCase().replace(/\s+/g, '_')}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function shareResults() {
+            if (!currentAnalysis) return;
+
+            const shareText = `Check out my ${currentAnalysis.skillName} skill analysis from SkillMaster! 🎓`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SkillMaster Analysis',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(err => console.log('Share failed:', err));
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareText + '\n' + window.location.href)
+                    .then(() => alert('✅ Link copied to clipboard!'))
+                    .catch(() => alert('❌ Unable to share. Please copy the URL manually.'));
+            }
+        }
+
+        function printResults() {
+            window.print();
+        }
+
+        function askRelatedQuestion(question) {
+            alert(`This would analyze: "${question}"\n\nIn the full version, this would trigger a new analysis based on this question.`);
+        }
+
+        function toggleAPI() {
+            const toggle = document.getElementById('apiToggle');
+            const status = document.getElementById('apiStatus');
+            USE_MOCK_DATA = !toggle.checked;
+            status.textContent = USE_MOCK_DATA ? 'Mock Data' : 'Live API';
+            status.style.color = USE_MOCK_DATA ? '#a0a0a0' : '#20808d';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('skillName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                analyzeSkill();
+            }
+        });
+    </script>
+</body>
+</html>
+
