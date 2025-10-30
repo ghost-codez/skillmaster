@@ -2,6 +2,8 @@
 
 An AI-powered skill breakdown and feedback system based on PocketFlow (agent-graph workflows) and the "Skilled Success" research methodology.
 
+![SkillMaster Interface](Screenshot%202025-10-29%20at%209.27.34%20PM.png)
+
 ## Overview
 
 SkillMaster helps you develop any skill by:
